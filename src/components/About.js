@@ -50,7 +50,7 @@ const About = () => (
         </h1>
         <div className='mb7 md-col-10 fs-18 sm-fs-24 serif'>
           <p>
-            The Crime Data Explorer publishes nation-wide crime data collected by the FBI in a digital format. The tool allows you to view trends and download bulk data allowing you to get a better understanding of crime across the country.
+            The Crime Data Explorer publishes nationwide crime data collected by the FBI in a digital format. The tool allows you to view trends and download bulk data so you can better understand crime across the country.
           </p>
         </div>
         <h2 className='mt0 mb4 pb1 fs-22 sm-fs-32 border-bottom border-blue-light'>
