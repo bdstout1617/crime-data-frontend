@@ -5,7 +5,7 @@ import lookupUsa from './usa'
 import data from '../../data/ucr-program-participation.json'
 
 
-const lookup = state => data[slugify(state)]
+const lookupUcr = state => data[slugify(state)]
 
 const isValidPlace = place => lookupUsa(place)
 const isValidCrime = crime => offenses.includes(crime)
@@ -19,8 +19,8 @@ export const shouldFetchSummaries = ({ crime, place }) => (
 
 export const shouldFetchNibrs = ({ crime, place }) => {
   if (noNibrs.includes(crime) || !isValidPlace(place)) return false
-  const coverage = lookup(place)
+  const coverage = lookupUcr(place)
   return coverage && coverage.nibrs
 }
 
-export default lookup
+export default lookupUcr

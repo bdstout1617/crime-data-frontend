@@ -97,10 +97,14 @@ class Explorer extends React.Component {
 
   render() {
     const { appState, dispatch, params, router } = this.props
-    const { crime, place } = params
+    // const { crime, place } = params
+    // console.log('FOO', params)
+
+    const crime = 'rape'
+    const place = params.stateName
 
     // show not found page if crime or place unfamiliar
-    if (!offenses.includes(crime) || !lookup(place)) return <NotFound />
+    if (!lookup(place)) return <NotFound />
 
     const { filters, nibrs, sidebar, summaries, ucr } = appState
     const nibrsData = filterNibrsData(nibrs.data, filters)
@@ -144,7 +148,7 @@ class Explorer extends React.Component {
             </div>
             <UcrParticipationInformation
               dispatch={dispatch}
-              place={params.place}
+              place={place}
               until={filters.until}
               ucr={ucr}
             />
@@ -159,13 +163,13 @@ class Explorer extends React.Component {
               keys={trendKeys}
             />
             {showNibrs && (<NibrsContainer
-              crime={params.crime}
+              crime={crime}
               data={nibrsData}
               dispatch={dispatch}
               error={nibrs.error}
               filters={filters}
               loading={nibrs.loading}
-              place={params.place}
+              place={place}
             />)}
             <hr className='mt0 mb3' />
             <AboutTheData crime={crime} place={place} />

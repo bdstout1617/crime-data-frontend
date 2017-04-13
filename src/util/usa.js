@@ -68,9 +68,9 @@ const getPlaceAbbrFromName = name => (
   )).pop()
 )
 
-const lookup = query => {
+const lookupUsa = query => {
   if (query.length <= 3) return getPlaceNameFromAbbr(query)
   return getPlaceAbbrFromName(lowerCase(query))
 }
 
-export { lookup as default, data, nationalKey }
+export { lookupUsa as default, data, nationalKey }
