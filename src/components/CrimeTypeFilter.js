@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 
-import FilterGroup from './FilterGroup'
+import CrimeFilterGroup from './CrimeFilterGroup'
 import { crimeTypes } from '../util/data'
 
 
@@ -10,14 +10,14 @@ const { violentCrime, propertyCrime } = crimeTypes
 const CrimeTypeFilter = ({ onChange, selected }) => (
   <div id='type-of-crime' className='mb4'>
     <div className='mb3 fs-22 bold border-bottom'>Type of crime</div>
-    <FilterGroup
+    <CrimeFilterGroup
       name='crime'
       title='Violent Crime'
       options={violentCrime}
       onChange={onChange}
       selected={selected}
     />
-    <FilterGroup
+    <CrimeFilterGroup
       name='crime'
       title='Property Crime'
       options={propertyCrime}

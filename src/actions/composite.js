@@ -18,11 +18,12 @@ const fetchData = () => (dispatch, getState) => {
   if (shouldFetchNibrs(filters)) dispatch(fetchNibrs(filters))
 }
 
-export const updateApp = (change, location) => dispatch => {
+export const updateApp = (change, router) => dispatch => {
+  const { location, params } = router
   dispatch(updateFilters(change))
 
   if (location) {
-    history.push(createNewLocation({ change, location }))
+    history.push(createNewLocation({ change, location, params }))
   }
 
   return dispatch(fetchData())

@@ -19,10 +19,7 @@ const routes = (
     <Route path='/' component={App}>
       <IndexRoute component={Home} />
       <Route path='downloads-and-docs' component={DownloadsAndDocs} />
-      <Route path='explorer' component={ExplorerContainer}>
-        <Route path='state/:stateName' component={ExplorerUsState} />
-        <Route path='agency/:agencyOri' component={ExplorerAgency} />
-      </Route>
+      <Route path='explorer/:placeType/:placeId' component={ExplorerContainer} />
       <Route path='about' component={About} />
       <Route path='*' component={NotFound} />
     </Route>

@@ -24,7 +24,8 @@ const createNewQuery = ({ change, oldQuery }) => {
   }
 }
 
-export const createNewLocation = ({ change, location }) => {
+export const createNewLocation = ({ change, location, params }) => {
+  debugger
   const pathname = createNewPathname({ change, oldPath: location.pathname })
   const query = createNewQuery({ change, oldQuery: location.query })
 

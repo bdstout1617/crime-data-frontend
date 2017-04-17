@@ -7,8 +7,8 @@ import TimePeriodFilter from './TimePeriodFilter'
 import { hideSidebar } from '../actions/sidebar'
 
 
-const Sidebar = ({ dispatch, filters, isOpen, onChange, router }) => {
-  const { crime, place } = router.params
+const Sidebar = ({ appState, dispatch, filters, isOpen, onChange, router }) => {
+  const { crime, place } = filters
   const hide = () => dispatch(hideSidebar())
 
   return (

@@ -11,7 +11,10 @@ const isValidPlace = place => lookupUsa(place)
 const isValidCrime = crime => offenses.includes(crime)
 const noNibrs = ['violent-crime', 'property-crime']
 
-export const shouldFetchUcr = ({ place }) => !!isValidPlace(place)
+export const shouldFetchUcr = ({ place }) => {
+  console.log('place', place)
+  return !!isValidPlace(place)
+}
 
 export const shouldFetchSummaries = ({ crime, place }) => (
   isValidCrime(crime) && isValidPlace(place)

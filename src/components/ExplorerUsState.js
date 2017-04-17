@@ -4,14 +4,12 @@ import React from 'react'
 import AboutTheData from './AboutTheData'
 import NibrsContainer from './NibrsContainer'
 import NotFound from './NotFound'
-import Sidebar from './Sidebar'
 import TrendContainer from './TrendContainer'
 import UcrParticipationInformation from './UcrParticipationInformation'
-import { updateApp } from '../actions/composite'
-import { hideSidebar, showSidebar } from '../actions/sidebar'
+
 import offenses from '../util/offenses'
 import ucrParticipation from '../util/ucr'
-import lookup from '../util/usa'
+import lookupState from '../util/usa'
 
 
 const filterNibrsData = (data, { since, until }) => {
@@ -54,59 +52,19 @@ const mungeSummaryData = (summaries, ucr, place) => {
   ))
 }
 
-class Explorer extends React.Component {
-  constructor(props) {
-    super(props)
-    this.props = props
-    this.handleSidebarChange = ::this.handleSidebarChange
-    this.toggleSidebar = ::this.toggleSidebar
-  }
-
-  componentDidMount() {
-    const { appState, dispatch, router } = this.props
-    const { since, until } = appState.filters
-    const { query } = router.location
-
-    const clean = (val, alt) => {
-      const yr = +val
-      return yr >= 1960 && yr <= 2014 ? yr : alt
-    }
-
-    const filters = {
-      ...this.props.filters,
-      ...router.params,
-      since: clean(query.since, since),
-      until: clean(query.until, until),
-    }
-
-    dispatch(updateApp(filters))
-  }
-
-  handleSidebarChange(change) {
-    const { location } = this.props.router
-    this.props.dispatch(updateApp(change, location))
-  }
-
-  toggleSidebar() {
-    const { dispatch } = this.props
-    const { isOpen } = this.props.appState.sidebar
-
-    if (isOpen) return dispatch(hideSidebar())
-    return dispatch(showSidebar())
-  }
-
+class ExplorerUsState extends React.Component {
   render() {
-    const { appState, dispatch, params, router } = this.props
-    // const { crime, place } = params
-    // console.log('FOO', params)
+    const { appState, dispatch, router } = this.props
+    const { params } = router
+    const { crime } = router.location.query
 
-    const crime = 'rape'
-    const place = params.stateName
+    console.log(params)
+    const place = params.placeId
 
     // show not found page if crime or place unfamiliar
-    if (!lookup(place)) return <NotFound />
+    if (!offenses.includes(crime) || !lookupState(place)) return <NotFound />
 
-    const { filters, nibrs, sidebar, summaries, ucr } = appState
+    const { filters, nibrs, summaries, ucr } = appState
     const nibrsData = filterNibrsData(nibrs.data, filters)
     const noNibrs = ['violent-crime', 'property-crime']
     const participation = ucrParticipation(place)
@@ -115,73 +73,45 @@ class Explorer extends React.Component {
     const trendKeys = Object.keys(summaries.data).map(k => startCase(k))
 
     return (
-      <div className='site-wrapper'>
-        <div className='sticky top-0'>
-          <div className='inline-block p1 bg-red-bright rounded-br md-hide lg-hide'>
-            <button
-              className='btn p1 line-height-1 border-none'
-              onClick={this.toggleSidebar}
-            >
-              <img
-                className='align-middle'
-                width='22'
-                height='20'
-                src='/img/filters.svg'
-                alt='filters'
-              />
-            </button>
-          </div>
+      <div className='container-main mx-auto px3 md-py3 lg-px8'>
+        <div className='items-baseline my4 border-bottom border-blue-lighter'>
+          <h1 className='flex-auto mt0 mb1 fs-22 sm-fs-32'>
+            {startCase(place)}, {startCase(crime)}
+          </h1>
         </div>
-        <Sidebar
+        <UcrParticipationInformation
           dispatch={dispatch}
-          filters={filters}
-          isOpen={sidebar.isOpen}
-          onChange={this.handleSidebarChange}
-          router={router}
+          place={place}
+          until={filters.until}
+          ucr={ucr}
         />
-        <div className='site-content'>
-          <div className='container-main mx-auto px3 md-py3 lg-px8'>
-            <div className='items-baseline my4 border-bottom border-blue-lighter'>
-              <h1 className='flex-auto mt0 mb1 fs-22 sm-fs-32'>
-                {startCase(place)}, {startCase(crime)}
-              </h1>
-            </div>
-            <UcrParticipationInformation
-              dispatch={dispatch}
-              place={place}
-              until={filters.until}
-              ucr={ucr}
-            />
-            <hr className='mt0 mb3' />
-            <TrendContainer
-              crime={crime}
-              place={place}
-              filters={filters}
-              data={trendData}
-              dispatch={dispatch}
-              loading={summaries.loading}
-              keys={trendKeys}
-            />
-            {showNibrs && (<NibrsContainer
-              crime={crime}
-              data={nibrsData}
-              dispatch={dispatch}
-              error={nibrs.error}
-              filters={filters}
-              loading={nibrs.loading}
-              place={place}
-            />)}
-            <hr className='mt0 mb3' />
-            <AboutTheData crime={crime} place={place} />
-          </div>
-        </div>
+        <hr className='mt0 mb3' />
+        <TrendContainer
+          crime={crime}
+          place={place}
+          filters={filters}
+          data={trendData}
+          dispatch={dispatch}
+          loading={summaries.loading}
+          keys={trendKeys}
+        />
+        {showNibrs && (<NibrsContainer
+          crime={crime}
+          data={nibrsData}
+          dispatch={dispatch}
+          error={nibrs.error}
+          filters={filters}
+          loading={nibrs.loading}
+          place={place}
+        />)}
+        <hr className='mt0 mb3' />
+        <AboutTheData crime={crime} place={place} />
       </div>
     )
   }
 }
 
-Explorer.defaultProps = {
-  params: { crime: 'murder', place: 'ohio' },
+ExplorerUsState.defaultProps = {
 }
 
-export default Explorer
+export default ExplorerUsState
