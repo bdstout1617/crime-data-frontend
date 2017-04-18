@@ -14,6 +14,11 @@ import ucrParticipation from '../util/ucr'
 import lookup from '../util/usa'
 
 
+const formatPlace = ({ placeType, placeName }) => ({
+  type: placeType,
+  name: placeName,
+})
+
 const filterNibrsData = (data, { since, until }) => {
   if (!data) return false
   const filtered = {}
@@ -66,6 +71,7 @@ class Explorer extends React.Component {
     const { appState, dispatch, router } = this.props
     const { since, until } = appState.filters
     const { query } = router.location
+    const place = formatPlace(router.params)
 
     const clean = (val, alt) => {
       const yr = +val
@@ -74,7 +80,8 @@ class Explorer extends React.Component {
 
     const filters = {
       ...this.props.filters,
-      ...router.params,
+      ...query,
+      place,
       since: clean(query.since, since),
       until: clean(query.until, until),
     }
@@ -97,17 +104,19 @@ class Explorer extends React.Component {
 
   render() {
     const { appState, dispatch, params, router } = this.props
-    const { crime, place } = params
+
+    const place = formatPlace(params)
+    const { crime } = router.location.query
 
     // show not found page if crime or place unfamiliar
-    if (!offenses.includes(crime) || !lookup(place)) return <NotFound />
+    if (!offenses.includes(crime)) return <NotFound /> // TODO: add back place check
 
     const { filters, nibrs, sidebar, summaries, ucr } = appState
     const nibrsData = filterNibrsData(nibrs.data, filters)
     const noNibrs = ['violent-crime', 'property-crime']
-    const participation = ucrParticipation(place)
+    const participation = ucrParticipation(place.name)
     const showNibrs = (!noNibrs.includes(crime) && participation.nibrs)
-    const trendData = mungeSummaryData(summaries.data, ucr.data, place)
+    const trendData = mungeSummaryData(summaries.data, ucr.data, place.name)
     const trendKeys = Object.keys(summaries.data).map(k => startCase(k))
 
     return (
@@ -139,19 +148,19 @@ class Explorer extends React.Component {
           <div className='container-main mx-auto px2 md-py3 lg-px8'>
             <div className='items-baseline my4 border-bottom border-blue-lighter'>
               <h1 className='flex-auto mt0 mb1 fs-22 sm-fs-32'>
-                {startCase(place)}, {startCase(crime)}
+                {startCase(place.name)}, {startCase(crime)}
               </h1>
             </div>
             <UcrParticipationInformation
               dispatch={dispatch}
-              place={params.place}
+              place={place.name}
               until={filters.until}
               ucr={ucr}
             />
             <hr className='mt0 mb3' />
             <TrendContainer
               crime={crime}
-              place={place}
+              place={place.name}
               filters={filters}
               data={trendData}
               dispatch={dispatch}
@@ -165,19 +174,15 @@ class Explorer extends React.Component {
               error={nibrs.error}
               filters={filters}
               loading={nibrs.loading}
-              place={params.place}
+              place={place.name}
             />)}
             <hr className='mt0 mb3' />
-            <AboutTheData crime={crime} place={place} />
+            <AboutTheData crime={crime} place={place.name} />
           </div>
         </div>
       </div>
     )
   }
-}
-
-Explorer.defaultProps = {
-  params: { crime: 'murder', place: 'ohio' },
 }
 
 export default Explorer

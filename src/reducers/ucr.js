@@ -21,7 +21,7 @@ export default (state = initialState, action) => {
         ...state,
         data: {
           ...state.data,
-          [action.place]: action.results,
+          [action.place.name]: action.results,
         },
         loading: false,
       }

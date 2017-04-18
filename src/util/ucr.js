@@ -5,9 +5,16 @@ import lookupUsa from './usa'
 import data from '../../data/ucr-program-participation.json'
 
 
-const lookup = state => data[slugify(state)]
+const lookup = ({ type, name }) => {
+  if (type === 'state') return data[slugify(name)]
+  return false // TODO: add logic for non-states
+}
 
-const isValidPlace = place => lookupUsa(place)
+const isValidPlace = ({ type, name }) => {
+  if (type === 'state') return lookupUsa(name)
+  return false // TODO: add logic for non-states
+}
+
 const isValidCrime = crime => offenses.includes(crime)
 const noNibrs = ['violent-crime', 'property-crime']
 

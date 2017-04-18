@@ -3,7 +3,7 @@ import upperFirst from 'lodash.upperfirst'
 import { get } from './http'
 import { mapToApiOffense, mapToApiOffenseParam } from './offenses'
 import { slugify } from './text'
-import lookupUsa, { nationalKey } from './usa'
+import lookupUsa, { nationalKey, nationalObj } from './usa'
 
 
 const API = '/api'
@@ -17,9 +17,12 @@ const dimensionEndpoints = {
 }
 
 const getNibrs = ({ crime, dim, place, type }) => {
+  const { type: placeType, name: placeName } = place
   const field = dimensionEndpoints[dim]
   const fieldPath = `${field}/offenses`
-  const loc = (place === nationalKey) ? 'national' : `states/${lookupUsa(place).toUpperCase()}`
+  const loc = (place === nationalKey)
+    ? 'national'
+    : `states/${lookupUsa(placeName).toUpperCase()}`
 
   const url = `${API}/${type}s/count/${loc}/${fieldPath}`
   const params = {
@@ -63,8 +66,8 @@ const buildSummaryQueryString = params => {
     `year<=${until}`,
   ]
 
-  if (place && place !== nationalKey) {
-    qs.push(`state=${lookupUsa(params.place)}`)
+  if (place && place.name !== nationalKey) {
+    qs.push(`state=${lookupUsa(params.place.name)}`)
   }
 
   return qs.join('&')
@@ -89,20 +92,21 @@ const getSummaryRequests = params => {
   ]
 
   // add national summary request (unless you already did)
-  if (place !== nationalKey) {
-    requests.push(getSummary({ crime, place: nationalKey, since, until }))
+  if (place.name !== nationalKey) {
+    requests.push(getSummary({ crime, place: nationalObj, since, until }))
   }
 
   return requests
 }
 
 const getUcrParticipation = place => {
-  const path = (place === nationalKey)
+  const { type, name } = place
+  const path = (name === nationalKey)
     ? 'participation/national'
-    : `participation/states/${lookupUsa(place).toUpperCase()}`
+    : `participation/states/${lookupUsa(name).toUpperCase()}`
 
   return get(`${API}/${path}`).then(response => ({
-    place: slugify(place),
+    place,
     results: response.results,
   }))
 }

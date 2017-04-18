@@ -4,7 +4,10 @@ import lookupUsa from '../util/usa'
 
 
 const isValidCrime = crime => offenses.includes(crime)
-const isValidPlace = place => lookupUsa(place)
+const isValidPlace = ({ type, name }) => {
+  if (type === 'state') return lookupUsa(name)
+  return false // TODO: add logic for non-states
+}
 
 export const resetFilter = ({ id }) => ({ type: FILTER_RESET, id })
 export const updateFilters = filters => {

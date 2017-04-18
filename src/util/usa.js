@@ -59,6 +59,7 @@ const data = {
 }
 
 const nationalKey = slugify(data.usa)
+const nationalObj = { type: 'national', name: nationalKey }
 
 const getPlaceNameFromAbbr = abbr => data[abbr.toLowerCase()]
 
@@ -73,4 +74,4 @@ const lookup = query => {
   return getPlaceAbbrFromName(lowerCase(query))
 }
 
-export { lookup as default, data, nationalKey }
+export { lookup as default, data, nationalKey, nationalObj }
