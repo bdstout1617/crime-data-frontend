@@ -50,7 +50,7 @@ const TrendSourceText = ({ dispatch, place, since, until }) => {
 
 TrendSourceText.propTypes = {
   dispatch: React.PropTypes.func,
-  place: React.PropTypes.string,
+  place: React.PropTypes.string.isRequired,
   since: React.PropTypes.number.isRequired,
   until: React.PropTypes.number.isRequired,
 }

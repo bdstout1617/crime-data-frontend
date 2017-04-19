@@ -9,9 +9,9 @@ export const fetchingUcrParticipation = () => ({
   type: UCR_PARTICIPATION_FETCHING,
 })
 
-export const receivedUcrParticipation = ({ place, results }) => ({
+export const receivedUcrParticipation = ({ placeId, results }) => ({
   type: UCR_PARTICIPATION_RECEIVED,
-  place,
+  placeId,
   results,
 })
 

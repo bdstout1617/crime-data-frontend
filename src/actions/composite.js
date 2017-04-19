@@ -10,20 +10,23 @@ import { nationalKey } from '../util/usa'
 
 const fetchData = () => (dispatch, getState) => {
   const { filters, ucr } = getState()
-  const fetchNational = !ucr.data[nationalKey] && filters.place !== nationalKey
+  const fetchNational = !ucr.data[nationalKey] && !filters.placeId && filters.placeType === 'state'
+  const place = {
+    placeId: filters.placeId,
+    placeType: filters.placeType,
+  }
 
   if (fetchNational) dispatch(fetchUcrParticipation(nationalKey))
-  if (shouldFetchUcr(filters)) dispatch(fetchUcrParticipation(filters.place))
+  if (shouldFetchUcr(filters)) dispatch(fetchUcrParticipation(place))
   if (shouldFetchSummaries(filters)) dispatch(fetchSummaries(filters))
-  if (shouldFetchNibrs(filters)) dispatch(fetchNibrs(filters))
+  // if (shouldFetchNibrs(filters)) dispatch(fetchNibrs(filters))
 }
 
-export const updateApp = (change, router) => dispatch => {
-  const { location, params } = router
+export const updateApp = (change, location) => dispatch => {
   dispatch(updateFilters(change))
 
   if (location) {
-    history.push(createNewLocation({ change, location, params }))
+    history.push(createNewLocation({ change, location }))
   }
 
   return dispatch(fetchData())

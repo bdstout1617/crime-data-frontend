@@ -11,9 +11,14 @@ import lookupUsa, { nationalKey } from '../util/usa'
 const formatNumber = format(',')
 
 const participationCsvLink = place => {
-  const path = (place === nationalKey)
-    ? 'participation/national'
-    : `geo/states/${lookupUsa(place).toUpperCase()}/participation`
+  const { placeId, placeType } = place
+  let path
+
+  if ((!placeType && !placeId) || (placeId === nationalKey)) {
+    path = 'participation/national'
+  } else if (placeType === 'state') {
+    path = `participation/states/${lookupUsa(placeId).toUpperCase()}`
+  }
 
   return [
     {
@@ -24,21 +29,23 @@ const participationCsvLink = place => {
 }
 
 const locationLinks = place => {
-  let links
-  if (place === nationalKey) {
+  const { placeId, placeType } = place
+  let links = []
+
+  if ((!placeType && !placeId) || (placeId === nationalKey)) {
     links = content.locations.national
-  } else {
-    links = content.locations.states[startCase(place)] || []
+  } else if (placeType === 'state') {
+    links = content.locations.states[startCase(placeId)] || []
   }
   return links.filter(l => l.text)
 }
 
 const UcrParticipationInformation = ({ dispatch, place, until, ucr }) => {
-  const csvLinks = participationCsvLink(place)
+  const csvLinks = participationCsvLink(place) // passing around place as an object
   const links = locationLinks(place).concat(csvLinks)
   const participation = ucrParticipation(place)
   const hybrid = (participation.srs && participation.nibrs)
-  const ucrPlaceInfo = !ucr.loading && ucr.data[place]
+  const ucrPlaceInfo = !ucr.loading && ucr.data[place.placeId]
   const data = ucrPlaceInfo && { ...ucrPlaceInfo.find(p => p.year === until) }
 
   if (!ucrPlaceInfo) return null
@@ -47,7 +54,7 @@ const UcrParticipationInformation = ({ dispatch, place, until, ucr }) => {
     <div className='mb5 clearfix'>
       <div className='lg-col lg-col-8 mb2 lg-m0 p0 lg-pr4 fs-18 serif'>
         <p>
-          {startCase(place)} reports {
+          {startCase(place.placeId)} reports {
             (hybrid && 'both ')
           }
           {(participation.srs) && (
@@ -70,7 +77,7 @@ const UcrParticipationInformation = ({ dispatch, place, until, ucr }) => {
         </p>
         {!ucr.loading && data.year && (
           <p>
-            In {until}, {formatNumber(data.reporting_agencies)} {startCase(place)} law
+            In {until}, {formatNumber(data.reporting_agencies)} {startCase(place.placeId)} law
             enforcement agencies reported data to the FBI, out of a total
             of {formatNumber(data.total_agencies)}. For that year, these statistics
             cover {Math.round(data.reporting_rate * 100)}% of the
@@ -96,7 +103,10 @@ const UcrParticipationInformation = ({ dispatch, place, until, ucr }) => {
 
 UcrParticipationInformation.propTypes = {
   dispatch: React.PropTypes.func.isRequired,
-  place: React.PropTypes.string.isRequired,
+  place: React.PropTypes.shape({
+    placeId: React.PropTypes.string,
+    placeType: React.PropTypes.string,
+  }),
   until: React.PropTypes.number.isRequired,
   ucr: React.PropTypes.object.isRequired,
 }

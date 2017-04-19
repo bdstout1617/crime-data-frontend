@@ -22,7 +22,6 @@ class ExplorerContainer extends React.Component {
     const filters = {
       ...this.props.filters,
       ...router.params,
-      place: router.params.stateName,
       crime: query.crime,
       since: clean(query.since, since),
       until: clean(query.until, until),
@@ -33,7 +32,6 @@ class ExplorerContainer extends React.Component {
 
   handleSidebarChange = change => {
     const { location } = this.props.router
-    console.log('change', change)
     this.props.dispatch(updateApp(change, location))
   }
 

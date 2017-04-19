@@ -1,22 +1,15 @@
 import { browserHistory } from 'react-router'
 
 
-const splitPath = path => {
-  const split = path.split('/')
-  return {
-    place: split[2],
-    crime: split[3],
-  }
-}
-
 const createNewPathname = ({ change, oldPath }) => {
-  const params = splitPath(oldPath)
-  const { crime, place } = change
-  return `/explorer/${place || params.place}/${crime || params.crime}`
+  if (change.placeType) {
+    return `/explorer/${change.placeType}/${change.placeId}`
+  }
+  return oldPath
 }
 
 const createNewQuery = ({ change, oldQuery }) => {
-  const { crime, place, ...rest } = change /* eslint no-unused-vars: 0 */
+  const { placeId, placeType, ...rest } = change /* eslint no-unused-vars: 0 */
 
   return {
     ...oldQuery,
@@ -25,7 +18,6 @@ const createNewQuery = ({ change, oldQuery }) => {
 }
 
 export const createNewLocation = ({ change, location, params }) => {
-  debugger
   const pathname = createNewPathname({ change, oldPath: location.pathname })
   const query = createNewQuery({ change, oldQuery: location.query })
 

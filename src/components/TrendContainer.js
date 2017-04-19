@@ -20,7 +20,7 @@ const TrendContainer = ({ crime, place, filters, data, dispatch, loading, keys }
         data={data}
         dispatch={dispatch}
         keys={keys}
-        place={place}
+        place={place.placeId}
         since={since}
         until={until}
       />
@@ -31,7 +31,7 @@ const TrendContainer = ({ crime, place, filters, data, dispatch, loading, keys }
     <div>
       <div className='mb2 p2 sm-p4 bg-blue-lighter'>
         <h2 className='m0 fs-24 sm-fs-32 sans-serif'>
-          {startCase(crime)} rate in {startCase(place)},{' '}
+          {startCase(crime)} rate in {startCase(place.placeId)},{' '}
           <br className='xs-hide' />
           {since}–{until}
         </h2>
@@ -40,7 +40,7 @@ const TrendContainer = ({ crime, place, filters, data, dispatch, loading, keys }
       {!loading && (
         <TrendSourceText
           dispatch={dispatch}
-          place={place}
+          place={place.placeId}
           since={since}
           until={until}
         />

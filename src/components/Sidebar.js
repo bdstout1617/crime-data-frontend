@@ -7,8 +7,8 @@ import TimePeriodFilter from './TimePeriodFilter'
 import { hideSidebar } from '../actions/sidebar'
 
 
-const Sidebar = ({ appState, dispatch, filters, isOpen, onChange, router }) => {
-  const { crime, place } = filters
+const Sidebar = ({ dispatch, filters, isOpen, onChange }) => {
+  const { crime, placeId } = filters
   const hide = () => dispatch(hideSidebar())
 
   return (
@@ -32,7 +32,7 @@ const Sidebar = ({ appState, dispatch, filters, isOpen, onChange, router }) => {
       <div className='p6 sm-p3 md-p4'>
         <LocationFilter
           onChange={onChange}
-          selected={startCase(place)}
+          selected={startCase(placeId)}
         />
         <TimePeriodFilter
           onChange={onChange}

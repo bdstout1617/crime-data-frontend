@@ -10,6 +10,8 @@ export const resetFilter = ({ id }) => ({ type: FILTER_RESET, id })
 export const updateFilters = filters => {
   const f = { ...filters }
 
+  console.log('filters update', f)
+
   if (f.crime && !isValidCrime(f.crime)) delete f.crime
   if (f.place && !isValidPlace(f.place)) delete f.place
 

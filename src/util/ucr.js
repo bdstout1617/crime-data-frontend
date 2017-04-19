@@ -1,28 +1,31 @@
 import offenses from './offenses'
 import { slugify } from './text'
-import lookupUsa from './usa'
+import lookupUsa, { nationalKey } from './usa'
 
 import data from '../../data/ucr-program-participation.json'
 
 
-const lookupUcr = state => data[slugify(state)]
+const lookupUcr = place => {
+  const { placeId, placeType } = place
+  if (placeType === 'state' && placeId) return data[slugify(placeId)]
+  return data[slugify(nationalKey)]
+}
 
-const isValidPlace = place => lookupUsa(place)
+const isValidUsState = placeId => lookupUsa(placeId)
 const isValidCrime = crime => offenses.includes(crime)
 const noNibrs = ['violent-crime', 'property-crime']
 
-export const shouldFetchUcr = ({ place }) => {
-  console.log('place', place)
-  return !!isValidPlace(place)
-}
-
-export const shouldFetchSummaries = ({ crime, place }) => (
-  isValidCrime(crime) && isValidPlace(place)
+export const shouldFetchUcr = ({ placeId }) => (
+  !!isValidUsState(placeId)
 )
 
-export const shouldFetchNibrs = ({ crime, place }) => {
-  if (noNibrs.includes(crime) || !isValidPlace(place)) return false
-  const coverage = lookupUcr(place)
+export const shouldFetchSummaries = ({ crime, placeId }) => (
+  isValidCrime(crime) && isValidUsState(placeId)
+)
+
+export const shouldFetchNibrs = ({ crime, placeId }) => {
+  if (noNibrs.includes(crime) || !isValidUsState(placeId)) return false
+  const coverage = lookupUcr(placeId)
   return coverage && coverage.nibrs
 }
 

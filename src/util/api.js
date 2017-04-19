@@ -71,38 +71,42 @@ const buildSummaryQueryString = params => {
 }
 
 const getSummary = params => {
-  const { place } = params
+  const { placeId } = params
   const endpoint = `${API}/counts`
   const qs = buildSummaryQueryString(params)
 
   return get(`${endpoint}?${qs}`).then(d => ({
-    place,
+    placeId,
     results: d.results,
   }))
 }
 
 const getSummaryRequests = params => {
-  const { crime, place, since, until } = params
+  const { crime, placeId, since, until } = params
 
   const requests = [
-    getSummary({ crime, place, since, until }),
+    getSummary({ crime, placeId, since, until }),
   ]
 
   // add national summary request (unless you already did)
-  if (place !== nationalKey) {
-    requests.push(getSummary({ crime, place: nationalKey, since, until }))
+  if (placeId !== nationalKey) {
+    requests.push(getSummary({ crime, placeId: nationalKey, since, until }))
   }
 
   return requests
 }
 
-const getUcrParticipation = place => {
-  const path = (place === nationalKey)
-    ? 'participation/national'
-    : `participation/states/${lookupUsa(place).toUpperCase()}`
+const getUcrParticipation = ({ placeId, placeType }) => {
+  let path
+
+  if (!placeId || placeId === nationalKey) {
+    path = 'participation/national'
+  } else if (placeType === 'state' && placeId) {
+    path = `participation/states/${lookupUsa(placeId).toUpperCase()}`
+  }
 
   return get(`${API}/${path}`).then(response => ({
-    place: slugify(place),
+    placeId: slugify(placeId),
     results: response.results,
   }))
 }

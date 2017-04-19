@@ -38,7 +38,7 @@ const NibrsContainer = ({
     </Term>
   )
 
-  const nibrsFirstYear = initialNibrsYear({ place, since })
+  const nibrsFirstYear = initialNibrsYear({ place: place.placeId, since })
 
   let [totalCount, content] = [0, <Loading />]
   if (!loading && data) {
@@ -53,7 +53,7 @@ const NibrsContainer = ({
           >
             <NibrsCard
               crime={crime}
-              place={place}
+              place={place.placeId}
               since={nibrsFirstYear}
               until={until}
               {...d}
@@ -70,20 +70,20 @@ const NibrsContainer = ({
     <div>
       <div className='mb2 p2 sm-p4 bg-blue-lighter'>
         <h2 className='m0 fs-24 sm-fs-32 sans-serif'>
-          {startCase(crime)} incident details in {startCase(place)},{' '}
+          {startCase(crime)} incident details in {startCase(place.placeId)},{' '}
           <br className='xs-hide' />
           {since}–{until}
         </h2>
         {(nibrsFirstYear !== since) && (
           <p className='my-tiny'>
-            {startCase(place)} started reporting {nibrs} data
+            {startCase(place.placeId)} started reporting {nibrs} data
             to the FBI in {nibrsFirstYear}.
           </p>
         )}
         <p className='m0'>
           {!error && data && `
             There were ${formatNumber(totalCount)} individual ${crime} incidents
-            reported to the FBI in ${startCase(place)} between ${nibrsFirstYear} and
+            reported to the FBI in ${startCase(place.placeId)} between ${nibrsFirstYear} and
             ${until}. This number may differ from the totals in the previous chart
             because of the differences in data sources.
           `}
@@ -94,7 +94,7 @@ const NibrsContainer = ({
       {content}
       {!loading && (
       <div className='center italic fs-12 mb8'>
-        <p>Source: Reported {nibrs} data from {startCase(place)}, {nibrsFirstYear}–{until}.</p>
+        <p>Source: Reported {nibrs} data from {startCase(place.placeId)}, {nibrsFirstYear}–{until}.</p>
       </div>
       )}
     </div>

@@ -11,7 +11,10 @@ import { data } from '../util/usa'
 const places = entries(data).map(d => startCase(d.value))
 
 const LocationSelect = ({ className, onChange, selected }) => {
-  const handleChange = e => onChange({ place: slugify(e.target.value) })
+  const handleChange = e => onChange({
+    placeId: slugify(e.target.value),
+    placeType: 'state'
+  })
 
   return (
     <div>
