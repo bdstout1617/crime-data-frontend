@@ -37,7 +37,7 @@ class Feedback extends React.Component {
   }
 
   close = () => {
-    this.triggerElement.focus()
+    if (this.triggerElement) this.triggerElement.focus()
     this.props.onClose()
   }
 
